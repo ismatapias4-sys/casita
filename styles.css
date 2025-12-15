@@ -1,0 +1,280 @@
+:root {
+    --primary-red: #ED1C24;
+    --dark-gray: #333333;
+    --light-gray: #f4f4f4;
+    --border-color: #cccccc;
+    --text-color: #4a4a4a;
+    --white: #ffffff;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--light-gray);
+    color: var(--text-color);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    min-height: 100vh;
+}
+
+.header {
+    width: 100%;
+    background-color: var(--primary-red);
+    padding: 1rem;
+    display: flex;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.logo-text {
+    color: var(--white);
+    font-weight: 700;
+    font-size: 1.5rem;
+}
+
+.content-wrapper {
+    width: 100%;
+    max-width: 480px;
+    padding: 2rem 1rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* Changed from center to accommodate mobile better */
+}
+
+.login-card, .verification-card, .success-card {
+    background-color: var(--white);
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    width: 100%;
+}
+
+.greeting {
+    color: var(--dark-gray);
+    font-size: 1.8rem;
+    margin-bottom: 2rem;
+    font-weight: 400;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+    position: relative;
+}
+
+.select-wrapper {
+    position: relative;
+}
+
+.select-wrapper::after {
+    content: "▼";
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.8rem;
+    color: var(--primary-red);
+    pointer-events: none;
+}
+
+select, input[type="tel"] {
+    width: 100%;
+    padding: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 1rem;
+    outline: none;
+    background-color: var(--white);
+    appearance: none;
+    transition: border-color 0.3s;
+}
+
+select:focus, input:focus {
+    border-color: var(--primary-red);
+}
+
+.floating-label {
+    position: absolute;
+    left: 1rem;
+    top: 1rem;
+    color: #999;
+    pointer-events: none;
+    transition: 0.2s ease all;
+    background-color: transparent;
+}
+
+/* Simulate floating label behavior when input has value or is focused */
+input:focus ~ .floating-label,
+input:not(:placeholder-shown) ~ .floating-label {
+    /* Since we don't have placeholder-shown logic easily without JS for non-placeholder inputs, 
+       we'll simplify for now or use JS to add a class. 
+       Actually, let's just use a static label above for simplicity or the placeholder approach.
+       Wait, let's try a simpler approach for the label to match typical material design.
+    */
+}
+
+/* Adjusting for simpler label display as per typical mobile forms */
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--text-color);
+    font-size: 0.9rem;
+}
+
+.form-check {
+    display: flex;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.form-check input {
+    margin-right: 0.5rem;
+    accent-color: var(--primary-red);
+    width: 20px;
+    height: 20px;
+}
+
+.btn-primary {
+    width: 100%;
+    padding: 1rem;
+    background-color: var(--primary-red);
+    color: var(--white);
+    border: none;
+    border-radius: 25px;
+    font-size: 1.1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn-primary:hover {
+    background-color: #d91a21;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Verification Step Styles */
+.verification-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.verification-header h3 {
+    color: var(--primary-red);
+    margin-bottom: 0.5rem;
+}
+
+.camera-container {
+    position: relative;
+    width: 100%;
+    padding-top: 100%; /* 1:1 Aspect Ratio */
+    background-color: #000;
+    border-radius: 50%; /* Circle frame */
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+    border: 4px solid var(--primary-red);
+}
+
+.camera-frame {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.camera-overlay {
+    position: absolute;
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    padding-bottom: 2rem;
+    width: 100%;
+    height: 100%;
+}
+
+.camera-instruction {
+    background-color: rgba(0,0,0,0.6);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+}
+
+.instructions-list ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.instructions-list li {
+    position: relative;
+    padding-left: 1.5rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.instructions-list li::before {
+    content: "•";
+    color: var(--primary-red);
+    position: absolute;
+    left: 0;
+    font-weight: bold;
+}
+
+/* Success Step Styles */
+.success-card {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.success-icon {
+    width: 80px;
+    height: 80px;
+    background-color: #4CAF50;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 3rem;
+    margin-bottom: 1.5rem;
+}
+
+@media (max-width: 480px) {
+    .content-wrapper {
+        padding: 1rem;
+    }
+    
+    .login-card {
+        padding: 1.5rem;
+    }
+}
