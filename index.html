@@ -3,125 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Davivienda</title>
+    <title>Bienvenido</title>
     <link rel="stylesheet" href="styles.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-    <div class="main-container">
-        <header class="header">
-            <div class="logo-container">
-                <h1 class="logo-text">Davivienda</h1>
+    <div class="container">
+        <div class="header-bg">
+            <div class="top-left-shape"></div>
+            <div class="content-wrapper">
+                <div class="logo">
+                    <i class="fa-solid fa-house-chimney"></i> <!-- Placeholder for the house logo -->
+                </div>
+                <h1>Nos alegra tenerle aquí</h1>
+                <p>En esta app puede hacerlo todo sin salir de casa.<br>¿Ya es nuestro cliente?</p>
             </div>
-        </header>
+        </div>
+        
+        <div class="image-container">
+            <!-- Placeholder for the smiling woman -->
+            <img src="https://img.freepik.com/free-photo/portrait-happy-young-woman-looking-camera_23-2147892777.jpg?w=740&t=st=1709664000~exp=1709664600~hmac=..." alt="Mujer sonriendo" class="main-image">
+        </div>
 
-        <!-- STEP 1: LOGIN FORM -->
-        <main class="content-wrapper" id="login-step">
-            <div class="login-card">
-                <h2 class="greeting">¡Hola!</h2>
-                
-                <form id="login-form">
-                    <div class="form-group">
-                        <label for="doc-type" class="sr-only">Tipo de documento</label>
-                        <div class="select-wrapper">
-                            <select id="doc-type" name="doc-type" required>
-                                <option value="" disabled selected>Seleccione su tipo de documento</option>
-                                <option value="CC">Cédula de ciudadanía</option>
-                                <option value="CE">Cédula de extranjería</option>
-                                <option value="TI">Tarjeta de identidad</option>
-                                <option value="RC">Registro civil de nacimiento</option>
-                                <option value="PA">Pasaporte</option>
-                                <option value="PPT">Permiso por Protección Temporal</option>
-                            </select>
-                        </div>
-                    </div>
+        <div class="floating-button">
+            <i class="fa-solid fa-headset"></i>
+        </div>
 
-                    <div class="form-group">
-                        <label for="doc-number" class="floating-label">Ingrese su número de documento</label>
-                        <input type="tel" id="doc-number" name="doc-number" required autocomplete="off">
-                    </div>
-
-                    <div class="form-check">
-                        <input type="checkbox" id="remember-me" name="remember-me">
-                        <label for="remember-me">Recordar mis datos de identidad</label>
-                    </div>
-
-                    <button type="submit" class="btn-primary">Continuar</button>
-                </form>
-            </div>
-        </main>
-
-        <!-- STEP 2: INSTRUCTIONS -->
-        <main class="content-wrapper hidden" id="instruction-step">
-            <div class="instruction-card">
-                <h3 class="instruction-title">Ubique el documento dentro del marco</h3>
-                
-                <div class="instruction-image-container">
-                    <!-- Placeholder for ID card illustration -->
-                    <div class="id-card-illustration">
-                        <div class="id-card-face">
-                            <div class="id-photo"></div>
-                            <div class="id-lines"></div>
-                            <div class="id-lines"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="instruction-footer">
-                    <div class="instruction-dots">
-                        <span class="dot active"></span>
-                        <span class="dot"></span>
-                        <span class="dot"></span>
-                    </div>
-                    <div class="button-group">
-                        <button class="btn-text" id="btn-omit">OMITIR</button>
-                        <button class="btn-primary-small" id="btn-instruction-continue">CONTINUAR</button>
-                    </div>
-                </div>
-            </div>
-        </main>
-
-        <!-- STEP 3: SCAN FRONT -->
-        <main class="content-wrapper hidden" id="scan-front-step">
-            <div class="camera-wrapper">
-                <div class="camera-header-overlay">
-                    <p>Ubique la parte de adelante de su documento</p>
-                </div>
-                
-                <div class="camera-view-container">
-                    <video id="camera-feed-front" autoplay playsinline muted></video>
-                    <div class="camera-overlay-frame"></div>
-                </div>
-
-                <div class="camera-controls">
-                    <button class="btn-capture" id="btn-capture-front"></button>
-                    <button class="btn-help">AYUDA ?</button>
-                </div>
-            </div>
-        </main>
-
-        <!-- STEP 4: SCAN BACK -->
-        <main class="content-wrapper hidden" id="scan-back-step">
-            <div class="camera-wrapper">
-                <div class="camera-header-overlay">
-                    <p>Ubique la parte de atrás de su documento</p>
-                </div>
-                
-                <div class="camera-view-container">
-                    <video id="camera-feed-back" autoplay playsinline muted></video>
-                    <div class="camera-overlay-frame"></div>
-                </div>
-
-                <div class="camera-controls">
-                    <button class="btn-capture" id="btn-capture-back"></button>
-                    <button class="btn-help">AYUDA ?</button>
-                </div>
-            </div>
-        </main>
-
+        <div class="bottom-action">
+            <a href="home.html" class="btn-primary">Soy cliente</a>
+        </div>
     </div>
-    <script src="script.js"></script>
 </body>
 </html>

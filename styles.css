@@ -1,422 +1,149 @@
-:root {
-    --primary-red: #ED1C24;
-    --dark-gray: #333333;
-    --light-gray: #f4f4f4;
-    --border-color: #cccccc;
-    --text-color: #4a4a4a;
-    --white: #ffffff;
-    --overlay-dark: rgba(0, 0, 0, 0.6);
-}
-
 * {
-    box-sizing: border-box;
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
 body {
-    font-family: 'Roboto', sans-serif;
-    background-color: var(--light-gray);
-    color: var(--text-color);
+    background-color: #fff;
     height: 100vh;
     display: flex;
     flex-direction: column;
+    overflow: hidden; /* Prevent scrolling if possible to match app feel */
 }
 
-.main-container {
+.container {
+    position: relative;
+    width: 100%;
+    height: 100%;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    width: 100%;
-    min-height: 100vh;
 }
 
-.header {
-    width: 100%;
-    background-color: var(--primary-red);
-    padding: 1rem;
-    display: flex;
-    justify-content: center;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    z-index: 100;
+.header-bg {
+    background-color: #D71920; /* Deep Red */
+    height: 65%; /* Covers top part */
+    position: relative;
+    padding: 20px;
+    padding-top: 60px; /* Space for status bar/top */
+    color: white;
+    /* Create the slanted/curved bottom */
+    clip-path: polygon(0 0, 100% 0, 100% 75%, 0 100%);
+    z-index: 1;
 }
 
-.logo-text {
-    color: var(--white);
-    font-weight: 700;
-    font-size: 1.5rem;
+/* Subtle lighter shape in top left */
+.top-left-shape {
+    position: absolute;
+    top: -50px;
+    left: -50px;
+    width: 200px;
+    height: 200px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    z-index: -1;
 }
 
 .content-wrapper {
-    width: 100%;
-    max-width: 480px;
-    padding: 2rem 1rem;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-}
-
-.hidden {
-    display: none !important;
-}
-
-/* LOGIN FORM STYLES */
-.login-card {
-    background-color: var(--white);
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    width: 100%;
-}
-
-.greeting {
-    color: var(--dark-gray);
-    font-size: 1.8rem;
-    margin-bottom: 2rem;
-    font-weight: 400;
-}
-
-.form-group {
-    margin-bottom: 1.5rem;
     position: relative;
+    z-index: 2;
+    padding: 0 20px;
 }
 
-.select-wrapper {
-    position: relative;
+.logo {
+    font-size: 40px;
+    margin-bottom: 20px;
 }
 
-.select-wrapper::after {
-    content: "▼";
+.logo i {
+    border: 2px solid white;
+    padding: 10px;
+    border-radius: 15px;
+    /* Customizing to look more like the cloud/house shape if needed, standard house for now */
+}
+
+h1 {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+p {
+    font-size: 16px;
+    line-height: 1.4;
+    opacity: 0.9;
+}
+
+.image-container {
     position: absolute;
-    right: 1rem;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 0.8rem;
-    color: var(--primary-red);
-    pointer-events: none;
-}
-
-select, input[type="tel"] {
-    width: 100%;
-    padding: 1rem;
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    font-size: 1rem;
-    outline: none;
-    background-color: var(--white);
-    appearance: none;
-}
-
-.floating-label {
-    position: absolute;
-    left: 1rem;
-    top: 1rem;
-    color: #999;
-    pointer-events: none;
-    transition: 0.2s ease all;
-    background-color: transparent;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 0.5rem;
-    color: var(--text-color);
-    font-size: 0.9rem;
-}
-
-.form-check {
+    top: 40%; /* Position it to overlap */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    z-index: 2;
     display: flex;
+    justify-content: center;
+}
+
+.main-image {
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+    object-fit: contain;
+    /* Masking or transparent png would be best. 
+       Assuming the user might replace this with a transparent PNG.
+       For now, we use a standard img styling */
+}
+
+.floating-button {
+    position: absolute;
+    right: 20px;
+    bottom: 30%; /* Adjust based on where the curve ends */
+    background-color: #D71920; /* Same red */
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
     align-items: center;
-    margin-bottom: 2rem;
+    color: white;
+    font-size: 20px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    z-index: 3;
+    border: 2px solid white; /* It has a white border in the screenshot? Hard to tell, looks clean */
 }
 
-.form-check input {
-    margin-right: 0.5rem;
-    accent-color: var(--primary-red);
-    width: 20px;
-    height: 20px;
+.bottom-action {
+    position: absolute;
+    bottom: 40px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 0 20px;
+    z-index: 4;
 }
 
 .btn-primary {
-    width: 100%;
-    padding: 1rem;
-    background-color: var(--primary-red);
-    color: var(--white);
-    border: none;
-    border-radius: 25px;
-    font-size: 1.1rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-/* INSTRUCTION STEP STYLES */
-.instruction-card {
-    background-color: var(--white);
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    height: 100%;
-}
-
-.instruction-title {
-    color: var(--dark-gray);
-    font-size: 1.2rem;
-    margin-bottom: 2rem;
-    font-weight: 500;
-}
-
-.instruction-image-container {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    margin-bottom: 2rem;
-}
-
-.id-card-illustration {
-    width: 200px;
-    height: 130px;
-    background-color: #f0f0f0;
-    border: 2px solid #333;
-    border-radius: 10px;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.id-card-illustration::before {
-    content: '';
-    position: absolute;
-    top: -10px;
-    left: -10px;
-    right: -10px;
-    bottom: -10px;
-    border: 2px solid #00d1b2; /* Greenish frame */
-    border-radius: 14px;
-}
-
-.id-card-face {
-    width: 100%;
-    height: 100%;
-    padding: 10px;
-    display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: 10px;
-}
-
-.id-photo {
-    background-color: #ccc;
-    border-radius: 4px;
-    height: 80%;
-    align-self: center;
-}
-
-.id-lines {
-    background-color: #e0e0e0;
-    height: 10px;
-    margin-bottom: 5px;
-    border-radius: 2px;
-}
-
-.instruction-footer {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1.5rem;
-}
-
-.instruction-dots {
-    display: flex;
-    gap: 8px;
-}
-
-.dot {
-    width: 8px;
-    height: 8px;
-    background-color: #ccc;
-    border-radius: 50%;
-}
-
-.dot.active {
-    background-color: #00bcd4; /* Cyan color */
-}
-
-.button-group {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    align-items: center;
-}
-
-.btn-text {
-    background: none;
-    border: none;
-    color: var(--dark-gray);
-    font-weight: 500;
-    cursor: pointer;
-    font-size: 1rem;
-}
-
-.btn-primary-small {
-    background-color: var(--primary-red);
-    color: var(--white);
-    border: none;
-    border-radius: 25px;
-    padding: 0.8rem 2rem;
-    font-weight: 500;
-    cursor: pointer;
-}
-
-/* CAMERA SCAN STYLES */
-.camera-wrapper {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: #000;
-    z-index: 200; /* Above everything */
-    display: flex;
-    flex-direction: column;
-}
-
-.camera-header-overlay {
-    background-color: var(--white);
-    padding: 1.5rem;
-    border-radius: 0 0 10px 10px;
-    text-align: center;
-    z-index: 210;
-    margin: 1rem;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-}
-
-.camera-header-overlay p {
-    font-weight: 500;
-    color: var(--dark-gray);
-}
-
-.camera-view-container {
-    flex: 1;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-}
-
-video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.camera-overlay-frame {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.7); /* Darken surroundings */
-    /* This is a trick to create a transparent hole. 
-       Better approach for cross-browser: use a big border or SVG mask. 
-       Let's use a simpler approach: a central transparent div with big borders. */
-    box-shadow: none; 
-    background: rgba(0,0,0,0.6);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.camera-overlay-frame::after {
-    content: '';
-    width: 85%;
-    height: 60%; /* Aspect ratio for ID */
-    border: 2px solid rgba(255,255,255,0.8);
-    border-radius: 10px;
-    box-shadow: 0 0 0 100vh rgba(0,0,0,0.6); /* This darkens the outside */
-}
-
-.camera-controls {
-    height: 120px;
-    background-color: #000;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    z-index: 210;
-}
-
-.btn-capture {
-    width: 70px;
-    height: 70px;
-    border-radius: 50%;
-    background-color: var(--white);
-    border: 4px solid #ccc;
-    cursor: pointer;
-    transition: transform 0.1s;
-}
-
-.btn-capture:active {
-    transform: scale(0.95);
-    background-color: #eee;
-}
-
-.btn-help {
-    position: absolute;
-    right: 20px;
-    background-color: var(--white);
-    border: none;
-    border-radius: 20px;
-    padding: 0.5rem 1rem;
-    font-weight: 500;
-    font-size: 0.8rem;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-
-.btn-help::after {
-    content: '?';
-    background-color: var(--dark-gray);
+    background-color: #D71920;
     color: white;
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 0.7rem;
-    margin-left: 5px;
-}
-
-/* VERIFICATION PAGE STYLES (Keep existing ones roughly) */
-.verification-card {
-    background-color: var(--white);
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    text-decoration: none;
+    padding: 15px 0;
     width: 100%;
     text-align: center;
+    border-radius: 30px;
+    font-weight: 600;
+    font-size: 18px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
-.camera-instruction {
-    position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: rgba(0,0,0,0.6);
-    color: white;
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
-    z-index: 20;
+/* Adjustments for different screen sizes */
+@media (max-height: 700px) {
+    .header-bg {
+        height: 70%;
+    }
+    .image-container {
+        top: 35%;
+        width: 60%;
+    }
 }
