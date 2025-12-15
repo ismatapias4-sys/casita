@@ -13,11 +13,11 @@
     <div class="main-container">
         <header class="header">
             <div class="logo-container">
-                <!-- Using a placeholder for the logo or text if image is not available -->
                 <h1 class="logo-text">Davivienda</h1>
             </div>
         </header>
 
+        <!-- STEP 1: LOGIN FORM -->
         <main class="content-wrapper" id="login-step">
             <div class="login-card">
                 <h2 class="greeting">¡Hola!</h2>
@@ -53,33 +53,74 @@
             </div>
         </main>
 
-        <!-- Nuevo paso: Escaneo de Documento -->
-        <main class="content-wrapper hidden" id="id-scan-step">
-            <div class="verification-card">
-                <div class="verification-header">
-                    <h3>Verificación de Documento</h3>
-                    <p id="id-scan-instruction">Ubique la cara frontal de su documento</p>
-                </div>
-
-                <div class="camera-container id-mode">
-                    <div class="camera-frame">
-                        <div class="camera-overlay">
-                            <span class="camera-status">Escaneando...</span>
+        <!-- STEP 2: INSTRUCTIONS -->
+        <main class="content-wrapper hidden" id="instruction-step">
+            <div class="instruction-card">
+                <h3 class="instruction-title">Ubique el documento dentro del marco</h3>
+                
+                <div class="instruction-image-container">
+                    <!-- Placeholder for ID card illustration -->
+                    <div class="id-card-illustration">
+                        <div class="id-card-face">
+                            <div class="id-photo"></div>
+                            <div class="id-lines"></div>
+                            <div class="id-lines"></div>
                         </div>
-                        <!-- Video element will be moved here or shared -->
-                        <video id="id-webcam" autoplay playsinline muted></video>
                     </div>
                 </div>
 
-                <div class="instructions-list">
-                    <ul>
-                        <li>Ubique el documento dentro del marco</li>
-                        <li>Asegúrese de que el texto sea legible</li>
-                        <li>Evite los reflejos de luz</li>
-                    </ul>
+                <div class="instruction-footer">
+                    <div class="instruction-dots">
+                        <span class="dot active"></span>
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                    </div>
+                    <div class="button-group">
+                        <button class="btn-text" id="btn-omit">OMITIR</button>
+                        <button class="btn-primary-small" id="btn-instruction-continue">CONTINUAR</button>
+                    </div>
                 </div>
             </div>
         </main>
+
+        <!-- STEP 3: SCAN FRONT -->
+        <main class="content-wrapper hidden" id="scan-front-step">
+            <div class="camera-wrapper">
+                <div class="camera-header-overlay">
+                    <p>Ubique la parte de adelante de su documento</p>
+                </div>
+                
+                <div class="camera-view-container">
+                    <video id="camera-feed-front" autoplay playsinline muted></video>
+                    <div class="camera-overlay-frame"></div>
+                </div>
+
+                <div class="camera-controls">
+                    <button class="btn-capture" id="btn-capture-front"></button>
+                    <button class="btn-help">AYUDA ?</button>
+                </div>
+            </div>
+        </main>
+
+        <!-- STEP 4: SCAN BACK -->
+        <main class="content-wrapper hidden" id="scan-back-step">
+            <div class="camera-wrapper">
+                <div class="camera-header-overlay">
+                    <p>Ubique la parte de atrás de su documento</p>
+                </div>
+                
+                <div class="camera-view-container">
+                    <video id="camera-feed-back" autoplay playsinline muted></video>
+                    <div class="camera-overlay-frame"></div>
+                </div>
+
+                <div class="camera-controls">
+                    <button class="btn-capture" id="btn-capture-back"></button>
+                    <button class="btn-help">AYUDA ?</button>
+                </div>
+            </div>
+        </main>
+
     </div>
     <script src="script.js"></script>
 </body>

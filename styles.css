@@ -5,6 +5,7 @@
     --border-color: #cccccc;
     --text-color: #4a4a4a;
     --white: #ffffff;
+    --overlay-dark: rgba(0, 0, 0, 0.6);
 }
 
 * {
@@ -37,6 +38,7 @@ body {
     display: flex;
     justify-content: center;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    z-index: 100;
 }
 
 .logo-text {
@@ -52,10 +54,15 @@ body {
     flex: 1;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start; /* Changed from center to accommodate mobile better */
+    justify-content: flex-start;
 }
 
-.login-card, .verification-card, .success-card {
+.hidden {
+    display: none !important;
+}
+
+/* LOGIN FORM STYLES */
+.login-card {
     background-color: var(--white);
     padding: 2rem;
     border-radius: 8px;
@@ -99,11 +106,6 @@ select, input[type="tel"] {
     outline: none;
     background-color: var(--white);
     appearance: none;
-    transition: border-color 0.3s;
-}
-
-select:focus, input:focus {
-    border-color: var(--primary-red);
 }
 
 .floating-label {
@@ -116,17 +118,6 @@ select:focus, input:focus {
     background-color: transparent;
 }
 
-/* Simulate floating label behavior when input has value or is focused */
-input:focus ~ .floating-label,
-input:not(:placeholder-shown) ~ .floating-label {
-    /* Since we don't have placeholder-shown logic easily without JS for non-placeholder inputs, 
-       we'll simplify for now or use JS to add a class. 
-       Actually, let's just use a static label above for simplicity or the placeholder approach.
-       Wait, let's try a simpler approach for the label to match typical material design.
-    */
-}
-
-/* Adjusting for simpler label display as per typical mobile forms */
 .form-group label {
     display: block;
     margin-bottom: 0.5rem;
@@ -160,45 +151,167 @@ input:not(:placeholder-shown) ~ .floating-label {
     transition: background-color 0.3s;
 }
 
-.btn-primary:hover {
-    background-color: #d91a21;
-}
-
-.hidden {
-    display: none !important;
-}
-
-/* Verification Step Styles */
-.verification-header {
-    text-align: center;
-    margin-bottom: 1.5rem;
-}
-
-.verification-header h3 {
-    color: var(--primary-red);
-    margin-bottom: 0.5rem;
-}
-
-.camera-container {
-    position: relative;
+/* INSTRUCTION STEP STYLES */
+.instruction-card {
+    background-color: var(--white);
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
     width: 100%;
-    padding-top: 100%; /* 1:1 Aspect Ratio */
-    background-color: #000;
-    border-radius: 50%; /* Circle frame */
-    overflow: hidden;
-    margin-bottom: 1.5rem;
-    border: 4px solid var(--primary-red);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    height: 100%;
 }
 
-.camera-frame {
+.instruction-title {
+    color: var(--dark-gray);
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    font-weight: 500;
+}
+
+.instruction-image-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 2rem;
+}
+
+.id-card-illustration {
+    width: 200px;
+    height: 130px;
+    background-color: #f0f0f0;
+    border: 2px solid #333;
+    border-radius: 10px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.id-card-illustration::before {
+    content: '';
     position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    border: 2px solid #00d1b2; /* Greenish frame */
+    border-radius: 14px;
+}
+
+.id-card-face {
+    width: 100%;
+    height: 100%;
+    padding: 10px;
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 10px;
+}
+
+.id-photo {
+    background-color: #ccc;
+    border-radius: 4px;
+    height: 80%;
+    align-self: center;
+}
+
+.id-lines {
+    background-color: #e0e0e0;
+    height: 10px;
+    margin-bottom: 5px;
+    border-radius: 2px;
+}
+
+.instruction-footer {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.instruction-dots {
+    display: flex;
+    gap: 8px;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    background-color: #ccc;
+    border-radius: 50%;
+}
+
+.dot.active {
+    background-color: #00bcd4; /* Cyan color */
+}
+
+.button-group {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    align-items: center;
+}
+
+.btn-text {
+    background: none;
+    border: none;
+    color: var(--dark-gray);
+    font-weight: 500;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.btn-primary-small {
+    background-color: var(--primary-red);
+    color: var(--white);
+    border: none;
+    border-radius: 25px;
+    padding: 0.8rem 2rem;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+/* CAMERA SCAN STYLES */
+.camera-wrapper {
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
+    background-color: #000;
+    z-index: 200; /* Above everything */
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+}
+
+.camera-header-overlay {
+    background-color: var(--white);
+    padding: 1.5rem;
+    border-radius: 0 0 10px 10px;
+    text-align: center;
+    z-index: 210;
+    margin: 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.camera-header-overlay p {
+    font-weight: 500;
+    color: var(--dark-gray);
+}
+
+.camera-view-container {
+    flex: 1;
+    position: relative;
+    display: flex;
     align-items: center;
+    justify-content: center;
+    overflow: hidden;
 }
 
 video {
@@ -207,74 +320,103 @@ video {
     object-fit: cover;
 }
 
-.camera-overlay {
+.camera-overlay-frame {
     position: absolute;
-    z-index: 10;
-    display: flex;
-    justify-content: center;
-    align-items: flex-end;
-    padding-bottom: 2rem;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
+    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.7); /* Darken surroundings */
+    /* This is a trick to create a transparent hole. 
+       Better approach for cross-browser: use a big border or SVG mask. 
+       Let's use a simpler approach: a central transparent div with big borders. */
+    box-shadow: none; 
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.camera-overlay-frame::after {
+    content: '';
+    width: 85%;
+    height: 60%; /* Aspect ratio for ID */
+    border: 2px solid rgba(255,255,255,0.8);
+    border-radius: 10px;
+    box-shadow: 0 0 0 100vh rgba(0,0,0,0.6); /* This darkens the outside */
+}
+
+.camera-controls {
+    height: 120px;
+    background-color: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 210;
+}
+
+.btn-capture {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background-color: var(--white);
+    border: 4px solid #ccc;
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+
+.btn-capture:active {
+    transform: scale(0.95);
+    background-color: #eee;
+}
+
+.btn-help {
+    position: absolute;
+    right: 20px;
+    background-color: var(--white);
+    border: none;
+    border-radius: 20px;
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.btn-help::after {
+    content: '?';
+    background-color: var(--dark-gray);
+    color: white;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.7rem;
+    margin-left: 5px;
+}
+
+/* VERIFICATION PAGE STYLES (Keep existing ones roughly) */
+.verification-card {
+    background-color: var(--white);
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    width: 100%;
+    text-align: center;
 }
 
 .camera-instruction {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
     background-color: rgba(0,0,0,0.6);
     color: white;
     padding: 0.5rem 1rem;
     border-radius: 20px;
-    font-size: 0.9rem;
-}
-
-.instructions-list ul {
-    list-style-type: none;
-    padding-left: 0;
-}
-
-.instructions-list li {
-    position: relative;
-    padding-left: 1.5rem;
-    margin-bottom: 0.5rem;
-    font-size: 0.9rem;
-    color: #666;
-}
-
-.instructions-list li::before {
-    content: "•";
-    color: var(--primary-red);
-    position: absolute;
-    left: 0;
-    font-weight: bold;
-}
-
-/* Success Step Styles */
-.success-card {
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-.success-icon {
-    width: 80px;
-    height: 80px;
-    background-color: #4CAF50;
-    color: white;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 3rem;
-    margin-bottom: 1.5rem;
-}
-
-@media (max-width: 480px) {
-    .content-wrapper {
-        padding: 1rem;
-    }
-    
-    .login-card {
-        padding: 1.5rem;
-    }
+    z-index: 20;
 }
