@@ -4,48 +4,111 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cargando...</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         body {
-            background-color: #D71920; /* Red background like the app */
+            background-color: #F4F6F9; /* Light grey background */
             height: 100vh;
             margin: 0;
             display: flex;
             flex-direction: column;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        .header {
+            background-color: #D71920; /* Red header */
+            padding: 15px 0;
+            text-align: center;
+            color: white;
+            padding-top: 50px; /* Status bar space */
+            padding-bottom: 20px;
+        }
+
+        .header-logo {
+            font-size: 32px;
+        }
+
+        .header-logo i {
+            border: 2px solid white;
+            padding: 8px;
+            border-radius: 12px;
+        }
+
+        .content {
+            flex: 1;
+            display: flex;
             justify-content: center;
             align-items: center;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            color: white;
+            position: relative;
         }
 
-        .spinner {
+        /* House loader animation */
+        .loader-house {
+            position: relative;
+            width: 60px;
+            height: 60px;
+        }
+
+        .loader-house i {
+            font-size: 50px;
+            color: #ccc; /* Grey base */
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .loader-house i.loading-part {
+            color: #D71920; /* Red loading part */
+            clip-path: polygon(0 0, 0 0, 0 100%, 0 100%);
+            animation: fillRed 2s infinite linear;
+        }
+
+        @keyframes fillRed {
+            0% { clip-path: polygon(0 0, 0 0, 0 100%, 0 100%); }
+            50% { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); }
+            100% { clip-path: polygon(100% 0, 100% 0, 100% 100%, 100% 100%); }
+        }
+
+        /* Floating button */
+        .floating-headset {
+            position: absolute;
+            right: 20px;
+            bottom: 30%; /* Approx position */
+            background-color: #D71920;
             width: 50px;
             height: 50px;
-            border: 5px solid rgba(255, 255, 255, 0.3);
             border-radius: 50%;
-            border-top-color: white;
-            animation: spin 1s ease-in-out infinite;
-            margin-bottom: 20px;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        h2 {
-            font-size: 18px;
-            font-weight: 500;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
     </style>
 </head>
 <body>
-    <div class="spinner"></div>
-    <h2>Cargando, por favor espere...</h2>
+    <div class="header">
+        <div class="header-logo">
+            <i class="fa-solid fa-house-chimney"></i>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="loader-house">
+            <!-- Base grey house -->
+            <i class="fa-solid fa-house-chimney" style="color: #e0e0e0;"></i>
+            <!-- Animated red house overlay -->
+            <i class="fa-solid fa-house-chimney loading-part"></i>
+        </div>
+
+        <div class="floating-headset">
+            <i class="fa-solid fa-headset"></i>
+        </div>
+    </div>
 
     <script>
-        // Optional: Redirect after a few seconds or just stay here
-        // setTimeout(() => {
-        //     alert("Proceso finalizado (Simulación)");
-        // }, 3000);
+        // Optional: Redirect logic if needed later
     </script>
 </body>
 </html>
