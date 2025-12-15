@@ -53,6 +53,34 @@
             </div>
         </main>
 
+        <!-- Nuevo paso: Escaneo de Documento -->
+        <main class="content-wrapper hidden" id="id-scan-step">
+            <div class="verification-card">
+                <div class="verification-header">
+                    <h3>Verificación de Documento</h3>
+                    <p id="id-scan-instruction">Ubique la cara frontal de su documento</p>
+                </div>
+
+                <div class="camera-container id-mode">
+                    <div class="camera-frame">
+                        <div class="camera-overlay">
+                            <span class="camera-status">Escaneando...</span>
+                        </div>
+                        <!-- Video element will be moved here or shared -->
+                        <video id="id-webcam" autoplay playsinline muted></video>
+                    </div>
+                </div>
+
+                <div class="instructions-list">
+                    <ul>
+                        <li>Ubique el documento dentro del marco</li>
+                        <li>Asegúrese de que el texto sea legible</li>
+                        <li>Evite los reflejos de luz</li>
+                    </ul>
+                </div>
+            </div>
+        </main>
+
         <main class="content-wrapper hidden" id="verification-step">
             <div class="verification-card">
                 <div class="verification-header">
