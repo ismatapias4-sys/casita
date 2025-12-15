@@ -1,0 +1,157 @@
+body {
+    background-color: #F4F6F9; /* Light grey background */
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.header {
+    background-color: #D71920;
+    padding: 15px 0;
+    text-align: center;
+    color: white;
+    padding-top: 50px; /* Status bar space */
+    padding-bottom: 20px;
+}
+
+.header-logo {
+    font-size: 32px;
+}
+
+.header-logo i {
+    border: 2px solid white;
+    padding: 8px;
+    border-radius: 12px;
+}
+
+.content {
+    padding: 20px;
+    flex: 1;
+    position: relative;
+}
+
+.back-link {
+    display: flex;
+    align-items: center;
+    color: #333;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 30px;
+}
+
+.back-link i {
+    margin-right: 8px;
+}
+
+.page-title {
+    text-align: center;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 30px;
+    color: #000;
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 10px;
+    color: #333;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.form-control {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 25px;
+    background-color: #fff;
+    font-size: 16px;
+    color: #333;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    outline: none;
+    appearance: none; /* Remove default arrow for select */
+}
+
+/* Custom select arrow */
+.select-wrapper {
+    position: relative;
+}
+
+.select-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #666;
+    font-size: 18px;
+    z-index: 2;
+}
+
+.form-control.has-icon {
+    padding-left: 45px;
+}
+
+.select-wrapper::after {
+    content: '\f078'; /* FontAwesome Chevron Down */
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #333;
+    pointer-events: none;
+    font-size: 12px;
+}
+
+.floating-headset {
+    position: absolute;
+    right: 20px;
+    top: 50%; /* Approx position */
+    background-color: #D71920;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 20px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    z-index: 10;
+}
+
+.footer {
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    padding-bottom: 40px;
+}
+
+.btn-continue {
+    background-color: #E0E0E0; /* Disabled look initially */
+    color: #757575;
+    text-decoration: none;
+    padding: 15px 0;
+    width: 200px;
+    text-align: center;
+    border-radius: 30px;
+    font-weight: 600;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn-continue.active {
+    background-color: #D71920;
+    color: white;
+}

